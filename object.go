@@ -18,6 +18,10 @@ func (object Object) Manufacturer() string {
 	return object.getStringProperty(C.kMIDIPropertyManufacturer)
 }
 
+func (object Object) IsOffline() bool {
+	return object.getBooleanProperty(C.kMIDIPropertyOffline)
+}
+
 func (object Object) getStringProperty(key C.CFStringRef) (propValue string) {
 	var result C.CFStringRef
 
@@ -33,4 +37,15 @@ func (object Object) getStringProperty(key C.CFStringRef) (propValue string) {
 	propValue = C.GoString(value)
 
 	return
+}
+
+func (object Object) getBooleanProperty(key C.CFStringRef) (propValue bool) {
+	var result C.SInt32
+	osStatus := C.MIDIObjectGetIntegerProperty(object.object, key, &result)
+
+	if osStatus != C.noErr {
+		return
+	}
+	
+	return result == 1
 }
